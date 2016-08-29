@@ -1,5 +1,6 @@
 #include <QtWidgets>
 #include <iostream>
+#include <fstream>
 #include <random>
 #include <malloc/malloc.h>
 #include <math.h>
@@ -23,11 +24,12 @@ PoincareDisk::~PoincareDisk()
 
 void PoincareDisk::loadData()
 {
-    do_loadData("Test");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Dataset"), "/Users/brad/");
+    do_loadData(fileName);
     update();
 }
 
-void PoincareDisk::do_loadData(char *filename)
+void PoincareDisk::do_loadData_random(QString fileName)
 {
     npts = 5000;
     pts_real = (double *)malloc(npts*sizeof(double));
@@ -46,6 +48,32 @@ void PoincareDisk::do_loadData(char *filename)
         //std::cout << pts_real[i] << " " << pts_imag[i] << std::endl;
     }
 
+}
+
+void PoincareDisk::do_loadData(QString fileName)
+{
+    std::streampos size;
+    std::ifstream dataFile(fileName.toStdString(), std::ios::binary | std::ios::in | std::ios::ate);
+    if (dataFile.is_open())
+    {
+        size = dataFile.tellg();
+        char *memblock = new char[size];
+        dataFile.seekg(0, std::ios::beg);
+        dataFile.read(memblock, size);
+        dataFile.close();
+        npts = (int)(size/(2*sizeof(double)));
+        std::cout << "Npts: " << npts << std::endl;
+        double *dmemblock = (double *)memblock;
+        std::cout << "Copying data into real and imag registers\n";
+
+        pts_real = new double[npts];
+        pts_imag = new double[npts];
+        for (int i = 0; i<npts; i++)
+        {
+            pts_real[i] = dmemblock[2*i];
+            pts_imag[i] = dmemblock[2*i + 1];
+        }
+    }
 }
 
 void PoincareDisk::paintEvent(QPaintEvent *event)

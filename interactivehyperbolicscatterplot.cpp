@@ -23,8 +23,10 @@ InteractiveHyperbolicScatterPlot::InteractiveHyperbolicScatterPlot(QWidget *pare
     QLabel *xlab = new QLabel("<font face=\"verdana\"><h2>X</h2></font>");
     QLabel *ylab = new QLabel("<font face=\"verdana\"><h2>Y</h2");
 
-    x->setMinimumHeight(100);
-    y->setMinimumHeight(100);
+    x->setMinimumHeight(75);
+    y->setMinimumHeight(75);
+    x->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+    y->setFrameStyle(QFrame::Sunken | QFrame::Panel);
 
     connect(plot, SIGNAL(x_translate(double)), x, SLOT(display(double)));
     connect(plot, SIGNAL(y_translate(double)), y, SLOT(display(double)));
@@ -50,7 +52,7 @@ InteractiveHyperbolicScatterPlot::InteractiveHyperbolicScatterPlot(QWidget *pare
 
 QGroupBox *InteractiveHyperbolicScatterPlot::createPlotBox(PoincareDisk *plot)
 {
-    QGroupBox *plotBox = new QGroupBox(tr("Poincare Disk"));
+    QGroupBox *plotBox = new QGroupBox(QString("Poincare Disk"));
     QVBoxLayout *vbox = new QVBoxLayout();
     vbox->addWidget(plot);
     plotBox->setLayout(vbox);

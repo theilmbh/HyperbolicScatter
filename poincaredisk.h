@@ -19,7 +19,8 @@ public:
     explicit PoincareDisk(QWidget *parent = 0);
     ~PoincareDisk();
 
-    void do_loadData(char *filename);
+    void do_loadData(QString fileName);
+    void do_loadData_random(QString fileName);
 
 public slots:
     void loadData();
