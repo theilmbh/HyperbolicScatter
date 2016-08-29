@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        poincaredisk.cpp
+        poincaredisk.cpp \
+    interactivehyperbolicscatterplot.cpp
 
-HEADERS  += poincaredisk.h
+HEADERS  += poincaredisk.h \
+    interactivehyperbolicscatterplot.h
 
 FORMS    += poincaredisk.ui

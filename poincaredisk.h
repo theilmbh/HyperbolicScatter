@@ -19,7 +19,14 @@ public:
     explicit PoincareDisk(QWidget *parent = 0);
     ~PoincareDisk();
 
-    void loadData(char *filename);
+    void do_loadData(char *filename);
+
+public slots:
+    void loadData();
+
+signals:
+    void x_translate(double newx);
+    void y_translate(double newy);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
@@ -39,6 +46,9 @@ private:
     double mhoriz_xlat[2] = {-1.0, 0.0};
     double mvert_xlat[2] = {0.0, -1.0};
     void mobiusTransform(double *v_d, double s);
+    void rotate(double theta);
+    void update_x(double delta);
+    void update_y(double delta);
 };
 
 #endif // POINCAREDISK_H

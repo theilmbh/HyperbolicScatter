@@ -13,9 +13,7 @@ PoincareDisk::PoincareDisk(QWidget *parent) :
     ui(new Ui::PoincareDisk)
 {
     ui->setupUi(this);
-
-    setWindowTitle(tr("Poincare Disk"));
-    resize(200, 200);
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 PoincareDisk::~PoincareDisk()
@@ -23,9 +21,15 @@ PoincareDisk::~PoincareDisk()
     delete ui;
 }
 
-void PoincareDisk::loadData(char *filename)
+void PoincareDisk::loadData()
 {
-    npts = 500;
+    do_loadData("Test");
+    update();
+}
+
+void PoincareDisk::do_loadData(char *filename)
+{
+    npts = 5000;
     pts_real = (double *)malloc(npts*sizeof(double));
     pts_imag = (double *)malloc(npts*sizeof(double));
 
@@ -90,26 +94,63 @@ void PoincareDisk::mobiusTransform(double *v_d, double s)
 
 }
 
+void PoincareDisk::rotate(double theta)
+{
+
+    std::complex<double> phase(std::cos(theta), std::sin(theta));
+    for(int pt = 0; pt < this->npts; pt++)
+    {
+        std::complex<double> z(pts_real[pt], pts_imag[pt]);
+        std::complex<double> zp;
+        zp = phase*z;
+        pts_real[pt] = (double)std::real(zp);
+        pts_imag[pt] = (double)std::imag(zp);
+    }
+
+}
+
 void PoincareDisk::keyPressEvent(QKeyEvent *event)
 {
     int the_key = event->key();
     if(the_key == Qt::Key_Left)
     {
         mobiusTransform(mhoriz_xlat, 0.1);
-        xlat += 0.1;
+        update_x(0.1);
     } else if (the_key == Qt::Key_Right) {
         mobiusTransform(mhoriz_xlat, -0.1);
-        xlat -= 0.1;
+        update_x(-0.1);
     }
     if(the_key == Qt::Key_Up)
     {
         mobiusTransform(mvert_xlat, 0.1);
-        ylat +=0.1;
+        update_y(0.1);
     } else if (the_key == Qt::Key_Down) {
         mobiusTransform(mvert_xlat, -0.1);
-        ylat -=0.1;
+        update_y(-0.1);
     }
+
+    switch(the_key)
+    {
+        case Qt::Key_R:
+            rotate(-0.01);
+            break;
+        case Qt::Key_L:
+            rotate(0.01);
+            break;
+    }
+
     update();
 }
 
+void PoincareDisk::update_x(double delta)
+{
+    x_lat += delta;
+    emit x_translate(x_lat);
+}
+
+void PoincareDisk::update_y(double delta)
+{
+    y_lat += delta;
+    emit y_translate(y_lat);
+}
 
